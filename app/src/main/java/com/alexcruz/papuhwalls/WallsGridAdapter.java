@@ -13,38 +13,33 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.alexcruz.papuhwalls.Palette.PaletteCallback;
-
-import com.alexcruz.papuhwalls.Walls.AllWalls;
+import com.alexcruz.papuhwalls.api.Wall;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class WallsGridAdapter extends BaseAdapter {
 
-    ArrayList<HashMap<String, String>> data;
-    public String wallurl;
     private int numColumns;
-    private HashMap<String, String> jsondata = new HashMap<String, String>();
 
     private WallsHolder holder;
+
+    List<Wall> wallList;
 
     private Context context;
     Preferences Preferences;
 
-    public WallsGridAdapter(Context context,
-                            ArrayList<HashMap<String, String>> arraylist, int numColumns) {
+    public WallsGridAdapter(Context context, List<Wall> wallList, int numColumns) {
         super();
         this.context = context;
         this.numColumns = numColumns;
-        data = arraylist;
+        this.wallList = wallList;
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return wallList.size();
     }
 
     @Override
@@ -64,8 +59,6 @@ public class WallsGridAdapter extends BaseAdapter {
         holder = null;
         Animation anim = AnimationUtils.loadAnimation(context, R.anim.fade_in);
 
-        jsondata = data.get(position);
-
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -83,29 +76,18 @@ public class WallsGridAdapter extends BaseAdapter {
 
         }
 
-        holder.name.setText(jsondata.get(AllWalls.NAME));
+        Wall currentWall = wallList.get(position);
 
-        holder.author.setText(jsondata.get(AllWalls.AUTHOR));
-
-        wallurl = jsondata.get(AllWalls.WALL);
+        holder.name.setText(currentWall.getName());
+        holder.author.setText(currentWall.getAuthor());
 
         holder.wall.startAnimation(anim);
         Picasso.with(context)
-                .load(wallurl)
+                .load(currentWall.getLocation())
                 .resize(imageWidth, imageWidth)
                 .centerCrop()
                 .transform(Palette.instance())
-                .into(holder.wall,
-                        new PaletteCallback(holder.wall){
-                            @Override
-                            public void onSuccess(android.support.v7.graphics.Palette palette){
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
+                .into(holder.wall);
 
         return wallitem;
     }
