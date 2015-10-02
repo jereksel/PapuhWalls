@@ -14,7 +14,7 @@ public interface WallsProvider extends Serializable {
 
     List<Wall> getWalls(Context context);
 
-    int getNumberOfWalls();
+    int getNumberOfWalls(Context context);
 
     int getIconId();
 

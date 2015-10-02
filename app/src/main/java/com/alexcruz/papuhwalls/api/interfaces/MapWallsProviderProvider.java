@@ -47,7 +47,7 @@ public abstract class MapWallsProviderProvider implements WallsProviderProvider 
     }
 
     @Override
-    public List<IDrawerItem> getDrawerItems(Context context) {
+    public List<IDrawerItem> getDrawerItems(final Context context) {
 
         int i = 0;
 
@@ -61,8 +61,19 @@ public abstract class MapWallsProviderProvider implements WallsProviderProvider 
                 drawerItems.add(new SectionDrawerItem().withName(category).withTypeface(Typeface.DEFAULT_BOLD).withTextColor(preferences.DrawerText()));
             }
 
-            for (WallsProvider wallsProvider : map.get(category)) {
-                drawerItems.add(new PrimaryDrawerItem().withName(wallsProvider.getName(context)).withIcon(wallsProvider.getIconId()).withIconTintingEnabled(true).withSelectedIconColor(preferences.SelectedIcon()).withIconColor(preferences.NormalIcon()).withSelectedTextColor(MainActivity.tint(preferences.SelectedDrawerText(), 1.0)).withSelectedColor(MainActivity.tint(preferences.DrawerSelector(), 1.0)).withTextColor(preferences.DrawerText()).withIdentifier(i + startId).withBadge(String.valueOf(wallsProvider.getNumberOfWalls())).withBadgeStyle(new BadgeStyle().withTextColor(preferences.BadgeText()).withColor(preferences.BadgeBackground())));
+            for (final WallsProvider wallsProvider : map.get(category)) {
+
+                final PrimaryDrawerItem primaryDrawerItem = new PrimaryDrawerItem().withName(wallsProvider.getName(context)).withIcon(wallsProvider.getIconId()).withIconTintingEnabled(true).withSelectedIconColor(preferences.SelectedIcon()).withIconColor(preferences.NormalIcon()).withSelectedTextColor(MainActivity.tint(preferences.SelectedDrawerText(), 1.0)).withSelectedColor(MainActivity.tint(preferences.DrawerSelector(), 1.0)).withTextColor(preferences.DrawerText()).withIdentifier(i + startId).withBadge("???").withBadgeStyle(new BadgeStyle().withTextColor(preferences.BadgeText()).withColor(preferences.BadgeBackground()));
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        primaryDrawerItem.withBadge(String.valueOf(wallsProvider.getNumberOfWalls(context)));
+                    }
+                }).start();
+
+
+                drawerItems.add(primaryDrawerItem);
                 i++;
             }
 
